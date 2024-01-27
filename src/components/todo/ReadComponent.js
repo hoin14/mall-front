@@ -42,7 +42,7 @@ function ReadComponent({tno}) {
                 <button type="button" 
                         className="rounded p-4 m-2 text-xl w-32 text-white bg-red-500"
                         onClick={() => moveToModify(todo.tno)}>
-                            Modifyt
+                            Modify
                 </button>
 
             </div>
