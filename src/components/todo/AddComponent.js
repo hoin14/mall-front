@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { postAdd } from '../../api/todoApi';
+import useCustomMove from '../../hooks/useCustomMove';
+import ResultModal from '../common/ResultModal';
 
 const initState = {
     title: "",
@@ -7,6 +10,8 @@ const initState = {
 }
 function AddComponent(props) {
     const [todo, setTodo] = useState({...initState})
+    const [result, setResult] = useState(null)
+    const {moveToList} = useCustomMove()
 
     const handleChangeTodo = (e) => {
         //todo[title]
@@ -16,7 +21,17 @@ function AddComponent(props) {
     }
 
     const handleClickAdd = () => {
-        console.log(todo)
+        //console.log(todo)
+        postAdd(todo).then(result => {
+            //{TNO:104}
+            setResult(result.TNO)
+            setTodo({...initState})        
+        })
+    }
+
+    const closeModal = () => {
+        setResult(null)
+        moveToList()
     }
 
     return (
@@ -61,6 +76,13 @@ function AddComponent(props) {
                             ADD
                 </button>
             </div>
+
+            {result ? <ResultModal
+                    title={'Add Result'}
+                    content={`New ${result} Added`}
+                    callbackFn={closeModal}
+                    /> : <></>}
+    
         </div>
     );
 }
