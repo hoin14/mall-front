@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { login } from '../../slices/loginSlice';
+import { useNavigate } from 'react-router-dom';
+import useCustomLogin from '../../hooks/useCustomLogin';
 
 const initState = {
     email: "",
@@ -11,8 +12,8 @@ function LoginComponent(props) {
     
     const [loginParam, setLoginParam] = useState({...initState})
 
-    const dispatch = useDispatch()
-    
+    const {doLogin, moveToPath} = useCustomLogin()
+
     const handleChange = (e) => {
         loginParam[e.target.name] = e.target.value
 
@@ -20,7 +21,26 @@ function LoginComponent(props) {
     }
 
     const handleClickLogin = (e) => {
-        dispatch(login(loginParam))
+        doLogin(loginParam).then(data => {
+            if(data.error){
+
+            }else{
+                moveToPath("/")
+            }
+        })
+        /*
+        dispatch(loginPostAsync(loginParam))
+            .unwrap()
+            .then(data => {
+                if(data.error){
+                    alert("check email, password!")
+                }else{
+                    alert("Login Success")
+                    
+                    navigate({pathname:"/"}, {replace:true})
+                }
+            })
+        */
     }
 
     return (
