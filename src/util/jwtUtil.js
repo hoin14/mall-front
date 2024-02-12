@@ -6,6 +6,8 @@ const jwtAxios = axios.create()
 
 const refreshJWT = async (accessToken, refreshToken) => {
 
+    console.log("refreshJWT:" + accessToken)
+
     const host = API_SERVER_HOST
 
     const header = {headers:{'Authorization':`Bearer ${accessToken}`}}
@@ -59,19 +61,20 @@ const beforeRes = async (res) => {
 
     if(data && data.error === 'ERROR_ACCESS_TOKEN'){
     
-        const memberCookieValue = getCookie('member')
+        const memberCookieValue = getCookie("member")
     
-        console.log(memberCookieValue)
+        console.log("beforeRes:" + memberCookieValue)
 
         const result = await refreshJWT(memberCookieValue.accessToken, memberCookieValue.refreshToken)
 
-        console.log(result.accessToken)
+        console.log("result1:" + result.accessToken)
+        console.log("result2:" + result.refreshToken)
 
         //new accessToken, refreshToken
         memberCookieValue.accessToken = result.accessToken
         memberCookieValue.refreshToken = result.refreshToken
 
-        setCookie('member', JSON.stringify(memberCookieValue), 1)
+        setCookie("member", JSON.stringify(memberCookieValue), 1)
 
         const originalRequest = res.config
 
