@@ -16,7 +16,6 @@ const useCustomLogin = () => {
     const doLogin = async (loginParam) => {
 
         const action = await dispatch(loginPostAsync(loginParam))
-
         return action.payload
     }
 

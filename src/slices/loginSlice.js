@@ -21,8 +21,11 @@ const loginSlice = createSlice({
     reducers: {
         login: (state, action) => {
             console.log("login.....", action)
-            console.log(action.payload)
-            return {email: action.payload.email}
+            
+            const payload = action.payload
+            console.log("payload.....", payload)
+            setCookie("member", JSON.stringify(payload), 1)
+            return payload
         },
         logout: () =>{
             console.log("logout.....")
@@ -37,7 +40,11 @@ const loginSlice = createSlice({
             console.log("fulfiled")
 
             const payload = action.payload
-
+            
+            if(payload.nickname){
+                console.log("nickname:" + payload.nickname)
+                payload.nickname = encodeURIComponent(payload.nickname)
+            }
             if(!payload.error){
                 setCookie("member", JSON.stringify(payload), 1)
             }
