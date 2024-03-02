@@ -1,3 +1,4 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import React, { useRef, useState } from 'react'
 import { postAdd } from '../../api/productApi'
 import useCustomMove from '../../hooks/useCustomMove'
@@ -19,11 +20,15 @@ function AddComponent(props) {
   
     const uploadRef = useRef()
   
-    const [fetching, setFetching] = useState(false)
+    //const [fetching, setFetching] = useState(false)
 
-    const [result, setResult] = useState(false)
+   //const [result, setResult] = useState(false)
 
     const {moveToList} = useCustomMove()
+
+    const addMutation = useMutation({
+        mutationFn: (product) => postAdd(product)
+    })
 
     const handleChangeProduct = (e) => {
         product[e.target.name] = e.target.value
@@ -46,22 +51,41 @@ function AddComponent(props) {
         
         console.log(formData)
         
-        setFetching(true)
+        //setFetching(true)
 
+        /*
         postAdd(formData).then(data => {
             setFetching(false)
             setResult(data.result)
         })
+        */
+       
+        addMutation.mutate(formData)
     }
 
+    const queryClient = useQueryClient()
+
     const closeModal = () => {
-        setResult(null)
-        
+        //setResult(null)
+        queryClient.invalidateQueries("products/list")
         moveToList({page:1})
     }
 
     return (
         <div className="border-2 border-sky-200 mt-10 m-2 p-4">
+
+        {addMutation.isPending ? <FetchingModal/> : <></>}
+        
+        {addMutation.isSuccess ? 
+            <ResultModal
+            title={'Product Add Result'}
+            content={`${addMutation.data.result}번 상품등록 완료`}
+            callbackFn={closeModal}
+            /> 
+            : 
+            <></>
+        }
+
         <div className="flex justify-center">
             <div className="relative mb-4 flex w-full flex-wrap items-stretch">
                 <div className="w-1/5 p-6 text-right font-bold">Product Name</div>
@@ -115,13 +139,7 @@ function AddComponent(props) {
             </div>
         </div>
 
-        {fetching ? <FetchingModal/> : <></>}
         
-        {result ? <ResultModal
-                    title={'Product Add Result'}
-                    content={`${result}번 상품등록 완료`}
-                    callbackFn={closeModal}
-                    /> : <></>}
 
     </div>
     )
